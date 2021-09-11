@@ -1,3 +1,10 @@
+#
+# python3.8 run.py -p 10 python3.8 alg2.py
+#
+# this program has two known bugs, can you find them?
+# tips:
+# - recv(100) what is 100? is this correct?
+# - how do we know the order of the client connections?
 import os
 import sys
 import time
