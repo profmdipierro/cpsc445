@@ -1,5 +1,12 @@
 # Prerequisites
 *.d
+#*
+*~
+*.pyc
+__cache__/*
+cache/*
+*.tmp
+a.out
 
 # Compiled Object files
 *.slo
