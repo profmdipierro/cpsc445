@@ -5,6 +5,7 @@
 *.pyc
 __cache__/*
 cache/*
+private/*
 *.tmp
 a.out
 
