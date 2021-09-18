@@ -1,6 +1,12 @@
 Assignment 1
 ============
 
+## Due Date
+
+September 26, 2021 at 11:59pm (Pacific Time)
+
+Late assignment not accepted.
+
 ## Assignment 1
 
 - Fill form https://forms.gle/9k74SUd66FSL2pidA
