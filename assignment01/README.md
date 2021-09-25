@@ -11,12 +11,7 @@ Late assignment not accepted.
 
 - Fill form https://forms.gle/9k74SUd66FSL2pidA
 - Create a private github repo with name "cpsc445" lower case
-- Give me private access to the repo by going to [settings][deploy keys][add deploy key] and add the following deploy key:
-
-```
-ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDMIRaMPT+5ArDBqK2OTt+QQ83E+mZbV11BmB4dFKapUzS/prksq/whGfXNuAOzXolPU6Pvc0SrggOgRnGWOv/sbWQ067Q4ebY584VUMdCaG9IcNUiQPfRVJ9OJuZhOp1J1PgbUtxnNjFoN+RNx3/V3Q4IjEgFM5en2kGSiN2Hefk/fwxtaOMkRgvd73OV25LraBBo+b/9cLb2gSUS0kjIVBaiqBd7EDLIHaPpUHBL6UD1EG/iWacy1wx9OO7tkYrKbBLmaa5dPBxfxer+ife9MxCBBzv41VRq92JNBudEkmi2XURLTxuNtahVt7ALo/N4qAQNCdhI0Pe6Ib/1QGXNvIFz1QGnNdB/4I7PR52hHzcWLmSeRWmpsyGDeeq3QmqKl281RTkFNPbkg5FnyRswiUHpeWbGfV9x6EAoHcateID351CnBXCSLAnC7YQTSIHW3IuK2yihV72cq2MIgRWlysgicJy7RwAwbG2Mtty8oW+T6mfkBh8pfosjOug9Q/t0= mdipierro@ci
-```
-
+- Give me private access to the repo by going to [settings][manage access][invite collaborator] and invite me: "profmdipierro"
 - Create a branch calls "assignment01"
 - In the above branch, in the root folder of the repo, write a C++ called "life.cpp" that implements Conway's Game of Life using threads to parallelize execution.
 
