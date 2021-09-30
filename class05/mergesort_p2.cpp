@@ -37,7 +37,7 @@ void merge(vector<int> & data, size_t index_start, size_t index_middle, size_t i
   }
 }
 
-
+/*
 void mergesort(vector<int> & data, size_t index_start, size_t index_end) {
   if (index_end - index_start < 2) return;
   size_t index_middle = (index_end + index_start) / 2;
@@ -46,6 +46,23 @@ void mergesort(vector<int> & data, size_t index_start, size_t index_end) {
   mergesort(data, index_middle, index_end);
   cout << "pre merge   ";
   print(data, index_start, index_end);
+  merge(data, index_start, index_middle, index_end);
+  cout << "after merge ";  
+  print(data, index_start, index_end);
+}
+*/
+
+void mergesort_p2(vector<int> & data, size_t index_start, size_t index_end) {
+  if (index_end - index_start < 2) return;
+  size_t index_middle = (index_end + index_start) / 2;
+  print(data, index_start, index_end);
+
+  std::thread left_thread([&](){mergesort_p2(data, index_start, index_middle);});
+  mergesort_p2(data, index_middle, index_end);
+  cout << "pre merge   ";
+  print(data, index_start, index_end);
+  left_thread.join();
+
   merge(data, index_start, index_middle, index_end);
   cout << "after merge ";  
   print(data, index_start, index_end);
@@ -61,7 +78,7 @@ int main(int argc, char** argv) {
     data[i] = rand() % 1000;
   }
      
-  mergesort(data, 0, data.size());
+  mergesort_p2(data, 0, data.size());
 
   print(data, 0, data.size());
   

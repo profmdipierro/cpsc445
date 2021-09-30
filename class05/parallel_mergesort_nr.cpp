@@ -37,18 +37,31 @@ void merge(vector<int> & data, size_t index_start, size_t index_middle, size_t i
   }
 }
 
+void mergesort_nr(vector<int> & data) {
+  int blocksize = 1;
+  int n = data.size();
+  int j,k;  
+  vector<std::thread*> threads;
+  while (blocksize < n) {
+    std::cout << "blocksize=" << blocksize << std::endl;
+    for (int i=0; i<n; i+=2*blocksize) {
+      j = i + blocksize;
+      k = std::min(n, j + blocksize);
+      if (k > i) {
+	// do this in  thread
+	std::cout << "i,j,k=" << i << ", " << j << "," << k << std::endl;
+	threads.push_back(new std::thread([&,i,j,k](){ merge(data, i,j,k); }));	
+      }
+    }
 
-void mergesort(vector<int> & data, size_t index_start, size_t index_end) {
-  if (index_end - index_start < 2) return;
-  size_t index_middle = (index_end + index_start) / 2;
-  print(data, index_start, index_end);
-  mergesort(data, index_start, index_middle);
-  mergesort(data, index_middle, index_end);
-  cout << "pre merge   ";
-  print(data, index_start, index_end);
-  merge(data, index_start, index_middle, index_end);
-  cout << "after merge ";  
-  print(data, index_start, index_end);
+    for (int i=0; i<threads.size(); i++) {
+      threads[i]->join();
+    }
+    threads.resize(0);
+    std::cout << "joined\n";
+    print(data, 0, n);
+    blocksize *= 2;
+  }
 }
 
 int main(int argc, char** argv) {
@@ -61,7 +74,7 @@ int main(int argc, char** argv) {
     data[i] = rand() % 1000;
   }
      
-  mergesort(data, 0, data.size());
+  mergesort_nr(data);
 
   print(data, 0, data.size());
   
