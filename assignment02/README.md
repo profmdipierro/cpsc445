@@ -3,7 +3,7 @@ Assignment 2
 
 ## Due Date
 
-September 12, 2021 at 11:59pm (Pacific Time)
+October 12, 2021 at 11:59pm (Pacific Time)
 
 Late assignment not accepted.
 
