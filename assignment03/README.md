@@ -30,9 +30,13 @@ In the usual cpsc445 repo, in branch "assignment03".
     G 1
     C 1
 
-    (+2 points)
+    (+1 points)
 
-5) Copy dna_count.cpp into dna_invert.cpp and modify the code as follows:
+5) In a file "README.txt" derive the Speedup formula for the above code as function of tB and tL (assume the fastest network topology for each step)
+
+   (+1 points)
+
+6) Copy dna_count.cpp into dna_invert.cpp and modify the code as follows:
 
     The program should read from "dna.txt" a string containing ATGC chars.
     It should scatter the string over the parallel processes
@@ -44,9 +48,13 @@ In the usual cpsc445 repo, in branch "assignment03".
     Example output.txt
     CTAATGT
 
-    (+2 points)
+    (+1 points)
 
-6) Copy the dna_invert into dna_parse.cpp and modify the code as follows:
+7) In the file "README.txt" derive the Speedup formula for the above code as function of tB and tL (assume the fastest network topology for each step)
+
+   (+1 points)
+
+8) Copy the dna_invert into dna_parse.cpp and modify the code as follows:
 
     The program should read from "dna.txt" a string containing ATGC chars.
     It should break the sequence into triplets (ATGTGATAC.. -> [ATG, TGA, TAC])
@@ -62,7 +70,11 @@ In the usual cpsc445 repo, in branch "assignment03".
     ATG 2
     (+2 points)
 
-7) Extra credit. Copy the dna_parse into dna_genes.cpp and modify the code as follows:
+9) In the file "README.txt" derive the Speedup formula for the above code as function of tB and tL (assume the fastest network topology for each step)
+
+   (+1 points)
+
+10) Extra credit. Copy the dna_parse into dna_genes.cpp and modify the code as follows:
 
     The program should read from "dna.txt" a string containing ATGC chars.
     It should break the sequence into triplets (ATGTGATAC.. -> [ATG, TGA, TAC])
