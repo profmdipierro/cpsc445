@@ -23,7 +23,7 @@ int main (int argc, char *argv[]) {
   // example code
   int n = (rank==0?5:0), sum = 0;
   check_error(MPI_Bcast(&n, 1, MPI_INT, 0, MPI_COMM_WORLD));  
-  check_error(MPI_Reduce(&sum, &n, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD));
+  check_error(MPI_Reduce(&n, &sum, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD));
   if (rank==0) {
     if (sum != n*p) { cerr << "error!\n"; exit(1); }
   }
