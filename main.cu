@@ -1,7 +1,7 @@
-#include "iostream"
+#include "stdio.h"
 
 
 int main(int argv, char** argv) {
-    std::cout << "works!\n";
+    printf("Hello world\n");
     return 0;
 }
