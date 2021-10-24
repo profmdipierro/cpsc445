@@ -1,6 +1,5 @@
 #include <stdio.h>
 
-
 //
 // Nearly minimal CUDA example.
 // Compile with:
