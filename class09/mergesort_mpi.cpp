@@ -50,29 +50,9 @@ void merge(vector<int> & data, size_t index_start, size_t index_middle, size_t i
 void mergesort(vector<int> & data, size_t index_start, size_t index_end) {
   if (index_end - index_start < 2) return;
   size_t index_middle = (index_end + index_start) / 2;
-  print(data, index_start, index_end);
   mergesort(data, index_start, index_middle);
   mergesort(data, index_middle, index_end);
-  cout << "pre merge   ";
-  print(data, index_start, index_end);
   merge(data, index_start, index_middle, index_end);
-  cout << "after merge ";  
-  print(data, index_start, index_end);
-}
-
-int ipow(int a, int b) {
-  int result = 1;
-  for(int i=0; i<b; i++) {
-    result = result*a;
-  }
-  return result;
-}
-
-int position(int rank, int k, int nsteps) {
-  for(int i=0; i<ipow(2, nsteps); i++) {
-    if (i*ipow(2, nsteps-k) == rank) return i;
-  }
-  return -1;
 }
 
 
@@ -95,69 +75,49 @@ int main(int argc, char** argv) {
     for(int i=0; i<N; i++) {
       data[i] = rand() % 1000;
     }
+    print(data, 0, data.size());
   }
+
   int items_node = N / p;
-  int block = N;
-  int tag = 0;
   MPI_Status status;
+
   for(int k=1; k<niter+1; k++) {
-    block /= 2;
-
+    int shift = 0x1 << (niter - k);
+    int block = shift * items_node;
     // sleep(rank);
-    
-    int pos = position(rank, k, niter);
-    if (pos>=0) { 
+    if (rank % shift == 0) {
+      int pos = rank / shift;
       if(pos % 2 == 0) {
-	int dest = (pos + 1)* ipow(2, niter-k);
+	int dest = rank + shift;
 	// cout << "step" << k << " " << rank << " -> " << dest << endl;
-	MPI_Send(&data[block], block, MPI_INT, dest, tag, MPI_COMM_WORLD);
+	MPI_Send(&data[block], block, MPI_INT, dest, 0, MPI_COMM_WORLD);
       } else if(pos % 2 == 1) {
-	int src = (pos - 1) * ipow(2, niter-k);
+	int src = rank - shift;
 	// cout << "step" << k << " " << rank << " <- " << src << endl;
-	MPI_Recv(&data[0], block, MPI_INT, src, tag, MPI_COMM_WORLD, &status);
+	MPI_Recv(&data[0], block, MPI_INT, src, 0, MPI_COMM_WORLD, &status);
       }
-      /*
-      cout << "rank:" << rank
-	   << "index_start:" << 0
-	   << "index_end:" << block << endl;
-      print(data, 0, block);
-      */      
     }
   }
 
-  mergesort(data, 0, block);
-  
-  cout << "HERE " << rank << endl;
+  mergesort(data, 0, items_node);
+
   for(int k=niter; k>0; k--) {
-    int pos = position(rank, k, niter);
-    if (pos>=0) {     
+    int shift = 0x1 << (niter - k); 
+    int block = shift * items_node;
+    if (rank % shift == 0) {
+      int pos = rank / shift;
       if(pos % 2 == 0) {
-	int src = (pos + 1)* ipow(2, niter-k);
-	// cout << "step" << k << " " << rank << " -> " << dest << endl;
-	MPI_Recv(&data[block], block, MPI_INT, src, tag, MPI_COMM_WORLD, &status);
-	cout << "block=" << block << endl;
+	int src = rank + shift;
+	MPI_Recv(&data[block], block, MPI_INT, src, 0, MPI_COMM_WORLD, &status);
 	merge(data, 0, block, 2*block);
-	print(data, 0, 2*block);
+	// print(data, 0, 2*block);
       } else if(pos % 2 == 1) {
-	int dest = (pos - 1) * ipow(2, niter-k);
-	// cout << "step" << k << " " << rank << " <- " << src << endl;
-	MPI_Send(&data[0], block, MPI_INT, dest, tag, MPI_COMM_WORLD);
+	int dest = rank - shift;
+	MPI_Send(&data[0], block, MPI_INT, dest, 0, MPI_COMM_WORLD);
       }
     }
-    // MPI_Barrier(MPI_COMM_WORLD);      
-    block *=2;
+    shift *=2;
   }
-
-    /*
-    int receiver = rank + block/items_block; 
-    if (rank==0) {
-      send data[index_middle:index_end] to node tbd
-	index_end = index_middle;
-    } else if(rank == receiver) {
-      recv data into data from 0
-    }
-    */
-  
 
   // if rank is zero we print
   if (rank == 0) {
