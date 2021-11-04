@@ -1,17 +1,17 @@
 #include <stdio.h>
 
-__device__ void g() {
-  printf("Hello from %i, %i\n", blockIdx.x, threadIdx.x);
-}
-
 __global__ void f() {
-  g();  
+  printf("(%i,%i) (%i,%i,%i)\n", blockIdx.x, blockIdx.y,
+  threadIdx.x, threadIdx.y, threadIdx.z);
 }
 
 int main(void) {
 
-  f<<<5, 3>>>();
+  dim2 A(7,7);
+  dim3 B(4,4,3);
+  
+  f<<<A, B>>>();
   cudaDeviceSynchronize();
 
-return 0;
+  return 0;
 }
