@@ -4,12 +4,13 @@ __global__
 void saxpy(int n, float a, float *x, float *y)
 {
   int i = blockIdx.x*blockDim.x + threadIdx.x;
+  printf("Hello from %i, %i\n", blockIdx.x, threadIdx.x);
   if (i < n) y[i] = a*x[i] + y[i];
 }
 
 int main(void)
 {
-  int N = 1<<20;
+  int N = 100;
   float *x, *y, *d_x, *d_y;
   x = (float*)malloc(N*sizeof(float));
   y = (float*)malloc(N*sizeof(float));
@@ -26,7 +27,7 @@ int main(void)
   cudaMemcpy(d_y, y, N*sizeof(float), cudaMemcpyHostToDevice);
 
   // Perform SAXPY on 1M elements
-  saxpy<<<(N+255)/256, 256>>>(N, 2.0f, d_x, d_y);
+  saxpy<<<(N+31)/32, 32>>>(N, 2.0f, d_x, d_y);
 
   cudaMemcpy(y, d_y, N*sizeof(float), cudaMemcpyDeviceToHost);
 
