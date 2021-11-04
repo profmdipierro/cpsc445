@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-void g() {
+__device__ void g() {
   printf("Hello from %i, %i\n", blockIdx.x, threadIdx.x);
 }
 
