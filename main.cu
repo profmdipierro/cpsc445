@@ -6,5 +6,7 @@ __global__ void f() {
 
 int main(void) {
   f<<<5, 3>>>();
+
+  cudaDeviceSynchronize();
   return 0;
 }
