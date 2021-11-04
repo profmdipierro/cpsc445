@@ -7,7 +7,7 @@ __global__ void f() {
 
 int main(void) {
 
-  dim2 A(7,7);
+  dim3 A(7,7,1);
   dim3 B(4,4,3);
   
   f<<<A, B>>>();
