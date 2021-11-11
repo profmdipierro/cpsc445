@@ -80,7 +80,7 @@ int main() {
 
   cudaMemcpy(ha, da, N*N*N*sizeof(int), cudaMemcpyDeviceToHost);
 
-  for (int i = 0; j<N; ++j) {
+  for (int i = 0; i<N; ++i) {
     for (int j = 0; j<N; ++j) {
       printf("%f", ha[point(i,j,N/2,N)]);
       if (j<N-1) printf(",") else printf("\n");		   
