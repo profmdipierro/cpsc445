@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-__global__ void reduce_sum(float * da, int N) {
+__global__ void reduce_sum(int * da, int N) {
   int W = blockDim.x;
   int tid = threadIdx.x;
   for(int i=tid+W; i<N; i+=W)  da[tid] += da[i];
