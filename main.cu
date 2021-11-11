@@ -3,7 +3,7 @@
 __global__ void reduce_sum(float * da, int N) {
   int W = blockDim.x;
   int tid = threadIdx.x;
-  for(i=tid+W; i<N; i+=W)  da[tid] += da[i];
+  for(int i=tid+W; i<N; i+=W)  da[tid] += da[i];
 }
 
 int main() {
@@ -22,7 +22,7 @@ int main() {
   cudaMemcpy(da, ha, N*sizeof(int), cudaMemcpyHostToDevice);
 
   int W = 10;
-  reduce_min<<<1,W>>>(da, N);
+  reduce_sum<<<1,W>>>(da, N);
   cudaDeviceSynchronize();
 
   int sums[10];
