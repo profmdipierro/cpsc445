@@ -12,3 +12,9 @@ patterns:
 - fork, thread create/join, mutex, locks, barrier
 
 
+
+https://medium.com/analytics-vidhya/cuda-memory-model-823f02cef0bf
+https://jhui.github.io/2017/03/06/CUDA/
+https://developer.download.nvidia.com/assets/cuda/files/reduction.pdf
+https://sodocumentation.net/cuda/topic/6566/parallel-reduction--e-g--how-to-sum-an-array-
+https://people.cs.rutgers.edu/~venugopa/parallel_summer2012/cuda_bitonic.html
