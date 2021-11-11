@@ -56,9 +56,9 @@ int main() {
       }
     }
   }
-  hb[point(3,5,8,N)] = -1;
-  hb[point(8,15,9,N)] = +2;
-  hb[point(10,3,22,N)] = -1;
+  hb[point(3,5,8,N)] = -1000;
+  hb[point(8,15,9,N)] = +20000;
+  hb[point(10,3,22,N)] = -1000;
   
   // set initial conditions for solver
   for (int i = 0; i<N; ++i) {
