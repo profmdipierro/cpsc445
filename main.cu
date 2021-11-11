@@ -16,19 +16,20 @@ __device__ int idx(int i, int j, int k, int N) {
 }
 
 __global__ void solve(float * da, float * db, float *da_tmp, int N, float h) {
-  int i = threadIdx.x;
-  int j = threadIdx.y;
-  int k = blockIdx.x;
+  int p = blockIdx.x * blockSize.x + threadIdx.x;
+  int i = p % N;
+  int j = (p / N) % N;
+  int k = (p / (N*N)) % N;
   if(i>0 && i<N) {
     if(j>0 && j<N) {    
       if(k>0 && k<N) {    
-	int p = idx(i,j,k,N);
-	int p_up = idx(i+1,j,k,N);
-	int p_down = idx(i-1,j,k,N);
-	int p_left = idx(i,j-1,k,N);
-	int p_right = idx(i,j+1,k,N);
-	int p_front = idx(i,j,k-1,N);
-	int p_back = idx(i,j,k+1,N);
+	int p = ijk;
+	int p_up = p + 1;
+	int p_down = p - 1;
+	int p_left = p + N;
+	int p_right = p - N;
+	int p_front = p + N*N;
+	int p_back = p - N*N;
 	da_tmp[p] = 1.0/6.0*(h*h*db[p] +
 			     da[p_up] + da[p_down] +
 			     da[p_left] + da[p_right] +
@@ -72,12 +73,16 @@ int main() {
     }
   }
 
+  int W = 40;
+  int S = ((N*N*N)/W + 1);
+
   cudaMemcpy(da, ha, N*N*N*sizeof(int), cudaMemcpyHostToDevice);
   cudaMemcpy(db, hb, N*N*N*sizeof(int), cudaMemcpyHostToDevice);
   cudaMemcpy(da_tmp, ha, N*N*N*sizeof(int), cudaMemcpyHostToDevice);
   // boundary conditions a[p] is zero at box boundary
   for(int step=0; step<100; step++) { // 100 even is important
-    solve<<<N,dim3(N,N)>>>(da, db, da_tmp, N, h);
+
+    solve<<<S,W>>>(da, db, da_tmp, N, h);
     cudaDeviceSynchronize();
     swap(da, da_tmp);
   }
