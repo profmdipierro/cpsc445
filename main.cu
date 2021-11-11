@@ -2,8 +2,17 @@
 
 __global__ void reduce_sum(int * da, int N) {
   int W = blockDim.x;
+  int stride = W * 2;
   int tid = threadIdx.x;
-  for(int i=tid+W; i<N; i+=W)  da[tid] += da[i];
+  for(int i=tid+stride; i<N; i+=stride) da[tid]+=da[i];
+  __syncthreads();
+  for(int delta=1; delta<=W; delta*=2) {
+    int i = tid*(2*delta);
+    if (i + delta < N) {
+      da[i] += da[i+delta];
+    }
+    __syncthreads();
+  }
 }
 
 int main() {
@@ -21,16 +30,13 @@ int main() {
   
   cudaMemcpy(da, ha, N*sizeof(int), cudaMemcpyHostToDevice);
 
-  int W = 10;
+  int W = 16;
   reduce_sum<<<1,W>>>(da, N);
   cudaDeviceSynchronize();
 
-  int sums[10];
-  cudaMemcpy(sums, da, W*sizeof(int), cudaMemcpyDeviceToHost);
+  int sum;
+  cudaMemcpy(&sum, da, sizeof(int), cudaMemcpyDeviceToHost);
 
-  int sum=0;
-  for(int i=0; i<W; i++) sum+=sums[i];
-  
   printf("%i", sum);
   cudaFree(da);
   free(ha);
