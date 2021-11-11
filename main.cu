@@ -17,10 +17,11 @@ __device__ int idx(int i, int j, int k, int N) {
 
 __global__ void solve(float * da, float * db, float *da_tmp, int N, float h) {
   int i = blockIdx.x;
-  int j = threadIdx.x;
+  int j = threadIdx.x % N;
+  int k = threadIdx.x / N;
   if(i>0 && i<N) {
     if(j>0 && j<N) {    
-      for (int k = 1; k<N-1; ++k) {
+      if(k>0 && k<N) {    
 	int p = idx(i,j,k,N);
 	int p_up = idx(i+1,j,k,N);
 	int p_down = idx(i-1,j,k,N);
@@ -76,7 +77,8 @@ int main() {
   cudaMemcpy(da_tmp, ha, N*N*N*sizeof(int), cudaMemcpyHostToDevice);
   // boundary conditions a[p] is zero at box boundary
   for(int step=0; step<100; step++) { // 100 even is important
-    solve<<<N,N>>>(da, db, da_tmp, N, h);
+    solve<<<N,N*N>>>(da, db, da_tmp, N, h);
+    cudaDeviceSynchronize();
     swap(da, da_tmp);
   }
 
