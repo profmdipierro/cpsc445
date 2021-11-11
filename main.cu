@@ -11,17 +11,21 @@ int point(int i, int j, int k, int N) {
   return N*N*i+N*j+k;
 }
 
+__device__ int idx(int i, int j, int k, int N) {
+  return N*N*i+N*j+k;
+}
+
 __global__ void solve(float * da, float * db, float *da_tmp, int N, float h) {
   for (int i = 1; i<N-1; ++i) {
     for (int j = 1; j<N-1; ++j) {
       for (int k = 1; k<N-1; ++k) {
-	int p = point(i,j,k,N);
-	int p_up = point(i+1,j,k,N);
-	int p_down = point(i-1,j,k,N);
-	int p_left = point(i,j-1,k,N);
-	int p_right = point(i,j+1,k,N);
-	int p_front = point(i,j,k-1,N);
-	int p_back = point(i,j,k+1,N);
+	int p = idx(i,j,k,N);
+	int p_up = idx(i+1,j,k,N);
+	int p_down = idx(i-1,j,k,N);
+	int p_left = idx(i,j-1,k,N);
+	int p_right = idx(i,j+1,k,N);
+	int p_front = idx(i,j,k-1,N);
+	int p_back = idx(i,j,k+1,N);
 	da_tmp[p] = 1.0/6.0*(h*h*db[p] +
 			     da[p_up] + da[p_down] +
 			     da[p_left] + da[p_right] +
