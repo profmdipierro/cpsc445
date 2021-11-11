@@ -16,14 +16,13 @@ __device__ int idx(int i, int j, int k, int N) {
 }
 
 __global__ void solve(float * da, float * db, float *da_tmp, int N, float h) {
-  int p = blockIdx.x * blockSize.x + threadIdx.x;
+  int p = blockIdx.x * blockDim.x + threadIdx.x;
   int i = p % N;
   int j = (p / N) % N;
   int k = (p / (N*N)) % N;
   if(i>0 && i<N) {
     if(j>0 && j<N) {    
       if(k>0 && k<N) {    
-	int p = ijk;
 	int p_up = p + 1;
 	int p_down = p - 1;
 	int p_left = p + N;
