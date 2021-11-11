@@ -78,7 +78,11 @@ int main() {
     swap(da, da_tmp);
   }
 
-  cudaMemcpy(hb, db, N*N*N*sizeof(int), cudaMemcpyDeviceToHost);
+  cudaMemcpy(ha, da, N*N*N*sizeof(int), cudaMemcpyDeviceToHost);
+
+  for (int j = 0; j<N; ++j) {
+    printf("a(3,%i,13) = %f\n", j, ha[point(3,j,13,N)]);
+  }
 
   cudaFree(da);
   cudaFree(db);
