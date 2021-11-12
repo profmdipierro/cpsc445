@@ -19,7 +19,7 @@ __global__ void reduce_sum(int * da, int N) {
 
 int main() {
   //INPUTS
-  int N = 50;
+  int N = 1000;
 
   int *ha = new int[N];
   int *da;
