@@ -2,14 +2,13 @@
 
 __global__ void reduce_sum(int * da, int N) {
   int W = blockDim.x;
-  int stride = W * 2;
   int tid = threadIdx.x;
-  for(int i=tid+stride; i<N; i+=stride) da[tid]+=da[i];
+  for(int i=tid+W; i<N; i+=W) da[tid]+=da[i];
   __syncthreads();
 
 
-  for(int delta=1; delta<=W; delta*=2) {
-    int i = tid*(2*delta);
+  for(int delta=1; delta<W; delta*=2) {
+    int i = tid*2*delta;
     if (i + delta < N) {
       da[i] += da[i+delta];
       printf("%i (%i): %i\n", i, delta, da[i]);
@@ -20,7 +19,7 @@ __global__ void reduce_sum(int * da, int N) {
 
 int main() {
   //INPUTS
-  int N = 40;
+  int N = 50;
 
   int *ha = new int[N];
   int *da;
