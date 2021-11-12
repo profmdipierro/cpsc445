@@ -20,8 +20,8 @@ __global__ void reduce_sum(int * da, int N) {
 
 int main() {
   //INPUTS
-  int N = 100;
-    
+  int N = 20;
+
   int *ha = new int[N];
   int *da;
   cudaMalloc((void **)&da, N*sizeof(int));
