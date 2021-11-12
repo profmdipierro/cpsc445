@@ -12,6 +12,7 @@ __global__ void reduce_sum(int * da, int N) {
     int i = tid*(2*delta);
     if (i + delta < N) {
       da[i] += da[i+delta];
+      printf("%i (%i): %i\n", i, delta, da[i]);
     }
     __syncthreads();
   }
