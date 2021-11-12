@@ -6,7 +6,9 @@ __global__ void reduce_sum(int * da, int N) {
   int tid = threadIdx.x;
   for(int i=tid+stride; i<N; i+=stride) da[tid]+=da[i];
   __syncthreads();
-  for(int delta=1; delta<=W; delta*=2) {
+
+
+  for(int delta=1; delta<W; delta*=2) {
     int i = tid*(2*delta);
     if (i + delta < N) {
       da[i] += da[i+delta];
