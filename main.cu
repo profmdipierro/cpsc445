@@ -8,7 +8,7 @@ __global__ void reduce_sum(int * da, int N) {
   __syncthreads();
 
 
-  for(int delta=1; delta<W; delta*=2) {
+  for(int delta=1; delta<=W; delta*=2) {
     int i = tid*(2*delta);
     if (i + delta < N) {
       da[i] += da[i+delta];
@@ -39,7 +39,8 @@ int main() {
   int sum;
   cudaMemcpy(&sum, da, sizeof(int), cudaMemcpyDeviceToHost);
 
-  printf("%i", sum);
+  int expected_sum = (N-1)*N*(2*N-1)/6;
+  printf("%i <<< should be zero!", expected_sum - sum);
   cudaFree(da);
   free(ha);
   return 0;
