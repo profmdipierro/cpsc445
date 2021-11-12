@@ -20,7 +20,7 @@ __global__ void reduce_sum(int * da, int N) {
 
 int main() {
   //INPUTS
-  int N = 1000;
+  int N = 10;
     
   int *ha = new int[N];
   int *da;
@@ -33,7 +33,7 @@ int main() {
   
   cudaMemcpy(da, ha, N*sizeof(int), cudaMemcpyHostToDevice);
 
-  int W = 16;
+  int W = 4;
   reduce_sum<<<1,W>>>(da, N);
   cudaDeviceSynchronize();
 
@@ -41,7 +41,7 @@ int main() {
   cudaMemcpy(&sum, da, sizeof(int), cudaMemcpyDeviceToHost);
 
   int expected_sum = (N-1)*N*(2*N-1)/6;
-  printf("%i <<< should be zero!", expected_sum - sum);
+  printf("%i (should be %i)", sum, expected_sum);
   cudaFree(da);
   free(ha);
   return 0;
