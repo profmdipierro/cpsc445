@@ -61,10 +61,11 @@ int main() {
   cudaMemcpy(hb, da, N*sizeof(int), cudaMemcpyDeviceToHost);
 
   printf("%i\n", hb[0]);
-  printf("%i\n", hb[2]);
+  printf("%i\n", hb[8]);
+  printf("%i\n", hb[16]);
   // printf("%i\n", hb[32]);
 
-  sum = hb[0] + hb[2]; //  + hb[32];
+  sum = hb[0] + hb[8] + hb[16]; //  + hb[32];
   int expected_sum = (N-1)*N/2; // (N-1)*N*(2*N-1)/6;
   printf("%i (should be %i)", sum, expected_sum);
   cudaFree(da);
