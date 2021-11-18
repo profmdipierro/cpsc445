@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-__global__ void reduce_sum_step1(int * da, int N) {
+__global__ void reduce_max_step1(int * da, int N) {
   int B = gridDim.x;
   int W = blockDim.x;
   int shift = W * B;
@@ -13,7 +13,7 @@ __global__ void reduce_sum_step1(int * da, int N) {
   tmp[tid] = da[gid];
   
   for(int i=gid+shift; i<N; i+=shift) {
-    tmp[tid]+=da[i];
+    tmp[tid]=std::max(tmp[tid], da[i]);
   }
   
   __syncthreads();
@@ -21,7 +21,7 @@ __global__ void reduce_sum_step1(int * da, int N) {
   for(int delta=1; delta<W; delta*=2) {    
     int i = threadIdx.x;
     if (i + delta < W) {
-      tmp[i] += tmp[i+delta];
+      tmp[i] = std::max(tmp[i], tmp[i+delta]);
     }
     __syncthreads();
   }
@@ -30,7 +30,7 @@ __global__ void reduce_sum_step1(int * da, int N) {
   da[shift] = tmp[0];
 }
 
-__global__ void reduce_sum_step2(int * da, int W) {
+__global__ void reduce_max_step2(int * da, int W) {
   int B = blockDim.x;
   int shift = B;
   int tid = threadIdx.x;
@@ -43,7 +43,7 @@ __global__ void reduce_sum_step2(int * da, int W) {
   for(int delta=1; delta<B; delta*=2) {    
     int i = tid*2*delta;
     if (i + delta < B) {
-      tmp[i] += tmp[i+delta];
+      tmp[i] = std::max(tmp[i], tmp[i+delta]);
     }
     __syncthreads();
   }
@@ -61,7 +61,7 @@ int main() {
 
   // set problem input (b)
   for (int i = 0; i<N; ++i) {
-    ha[i] = i*i;
+    ha[i] = 100-(i-7)*(i-7);
   }
   
   cudaMemcpy(da, ha, N*sizeof(int), cudaMemcpyHostToDevice);
@@ -74,11 +74,10 @@ int main() {
   reduce_sum_step2<<<1,B>>>(da, W);
   cudaDeviceSynchronize();
 
-  int sum;
-  cudaMemcpy(&sum, da, sizeof(int), cudaMemcpyDeviceToHost);
+  int max;
+  cudaMemcpy(&max, da, sizeof(int), cudaMemcpyDeviceToHost);
 
-  int expected_sum =  (N-1)*N*(2*N-1)/6;
-  printf("%i (should be %i)", sum, expected_sum);
+  printf("%i (should be 100)", max);
   cudaFree(da);
   free(ha);
   free(hb);
