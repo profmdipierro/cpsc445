@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-__global__ void reduce_sum_part1(int * da, int N) {
+__global__ void reduce_sum_step1(int * da, int N) {
   int B = gridDim.x;
   int W = blockDim.x;
   int shift = W * B;
@@ -50,7 +50,7 @@ int main() {
 
   int B = 3;
   int W = 16;
-  reduce_sum<<<B,W>>>(da, N);
+  reduce_sum_step1<<<B,W>>>(da, N);
   cudaDeviceSynchronize();
 
   int sum;
