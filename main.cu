@@ -22,7 +22,9 @@ __global__ void sort(float * a, int N) {
       if (l > i)
 	if ((((i & k) == 0) && (a[i] > a[l])) ||
 	    (((i & k) != 0) && (a[i] < a[l]))) {	      
-	  swap(a[i], a[l]);
+	  float c = a[i];
+	  a[i] = a[l];
+	  a[l] = c;
 	}
       __syncthreads();
     }
@@ -65,7 +67,7 @@ int main() {
 
   cudaDeviceSynchronize();
 
-  cudaMemcpy(ha, da, M*sizeof(int), cudaMemcpyDeviceToHost);
+  cudaMemcpy(ha, da, N*sizeof(int), cudaMemcpyDeviceToHost);
 
   for (int i = 0; i<N; ++i) {
     printf("%f\n", ha[i]);
