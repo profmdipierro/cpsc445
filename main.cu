@@ -35,7 +35,7 @@ int main() {
   
   cudaMemcpy(da, ha, N*sizeof(int), cudaMemcpyHostToDevice);
 
-  int B = 3
+  int B = 3;
   int W = 16;
   reduce_sum<<<B,W>>>(da, N);
   cudaDeviceSynchronize();
