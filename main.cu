@@ -42,7 +42,7 @@ __global__ void reduce_max_step2(int * da, int W) {
   __shared__ int tmp[1024];  
 
   for(int i=0; i<W; i++)
-    tmp[i] = da[i*W];
+    tmp[i] = da[i*shift];
   
   for(int delta=1; delta<B; delta*=2) {    
     int i = tid*2*delta;
