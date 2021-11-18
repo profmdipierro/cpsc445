@@ -1,5 +1,9 @@
 #include <stdio.h>
 
+__device__ int max(int a, int b) {
+  return (a<b)?b:a;
+}
+
 __global__ void reduce_max_step1(int * da, int N) {
   int B = gridDim.x;
   int W = blockDim.x;
@@ -13,7 +17,7 @@ __global__ void reduce_max_step1(int * da, int N) {
   tmp[tid] = da[gid];
   
   for(int i=gid+shift; i<N; i+=shift) {
-    tmp[tid]=std::max(tmp[tid], da[i]);
+    tmp[tid]=max(tmp[tid], da[i]);
   }
   
   __syncthreads();
@@ -21,7 +25,7 @@ __global__ void reduce_max_step1(int * da, int N) {
   for(int delta=1; delta<W; delta*=2) {    
     int i = threadIdx.x;
     if (i + delta < W) {
-      tmp[i] = std::max(tmp[i], tmp[i+delta]);
+      tmp[i] = max(tmp[i], tmp[i+delta]);
     }
     __syncthreads();
   }
@@ -43,7 +47,7 @@ __global__ void reduce_max_step2(int * da, int W) {
   for(int delta=1; delta<B; delta*=2) {    
     int i = tid*2*delta;
     if (i + delta < B) {
-      tmp[i] = std::max(tmp[i], tmp[i+delta]);
+      tmp[i] = max(tmp[i], tmp[i+delta]);
     }
     __syncthreads();
   }
@@ -68,10 +72,10 @@ int main() {
 
   int B = 3;
   int W = 16;
-  reduce_sum_step1<<<B,W>>>(da, N);
+  reduce_max_step1<<<B,W>>>(da, N);
   cudaDeviceSynchronize();
   
-  reduce_sum_step2<<<1,B>>>(da, W);
+  reduce_max_step2<<<1,B>>>(da, W);
   cudaDeviceSynchronize();
 
   int max;
