@@ -37,7 +37,7 @@ __global__ void reduce_sum(int * da, int N) {
 
 int main() {
   //INPUTS
-  int N = 12;
+  int N = 100;
 
   int *ha = new int[N];
   int *hb = new int[N];
@@ -51,8 +51,8 @@ int main() {
   
   cudaMemcpy(da, ha, N*sizeof(int), cudaMemcpyHostToDevice);
 
-  int B = 2;
-  int W = 2;
+  int B = 3;
+  int W = 8;
   reduce_sum_step1<<<B,W>>>(da, N);
   cudaDeviceSynchronize();
 
