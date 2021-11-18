@@ -64,7 +64,7 @@ int main() {
   // printf("%i\n", hb[32]);
 
   sum = hb[0] + hb[2]; //  + hb[32];
-  int expected_sum = (N-1)*N/2 // (N-1)*N*(2*N-1)/6;
+  int expected_sum = (N-1)*N/2; // (N-1)*N*(2*N-1)/6;
   printf("%i (should be %i)", sum, expected_sum);
   cudaFree(da);
   free(ha);
