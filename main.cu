@@ -5,10 +5,15 @@ __global__ void reduce_sum_step1(int * da, int N) {
   int W = blockDim.x;
   int shift = W * B;
 
+  __shared__ int tmp[1024];
+
+  int tid = threadIdx.x;
   int gid = blockIdx.x * blockDim.x + threadIdx.x;
+
+  tmp[tid] = da[gid];
   
   for(int i=gid+shift; i<N; i+=shift) {
-    da[gid]+=da[i];
+    tmp[tid]+=da[i];
   }
   
   __syncthreads();
@@ -17,10 +22,11 @@ __global__ void reduce_sum_step1(int * da, int N) {
   for(int delta=1; delta<W; delta*=2) {    
     int i = threadIdx.x;
     if (i + delta < W) {
-      da[i+shift] += da[i+shift+delta];
+      tmp[i] += tmp[i+delta];
     }
     __syncthreads();
-  }  
+  }
+  da[shift] = tmp[0];
 }
 
 __global__ void reduce_sum_step2(int * da, int W) {
@@ -56,19 +62,13 @@ int main() {
   int W = 16;
   reduce_sum_step1<<<B,W>>>(da, N);
   cudaDeviceSynchronize();
+  
   reduce_sum_step2<<<1,B>>>(da, W);
   cudaDeviceSynchronize();
 
   int sum;
-  // cudaMemcpy(&sum, da, sizeof(int), cudaMemcpyDeviceToHost);
-  cudaMemcpy(hb, da, N*sizeof(int), cudaMemcpyDeviceToHost);
+  cudaMemcpy(&sum, da, sizeof(int), cudaMemcpyDeviceToHost);
 
-  printf("%i\n", hb[0]);
-  // printf("%i\n", hb[16]);
-  // printf("%i\n", hb[32]);
-  // printf("%i\n", hb[32]);
-
-  sum = hb[0]; //  + hb[32];
   int expected_sum =  (N-1)*N*(2*N-1)/6;
   printf("%i (should be %i)", sum, expected_sum);
   cudaFree(da);
