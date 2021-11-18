@@ -10,6 +10,17 @@ __global__ void reduce_sum_step1(int * da, int N) {
   for(int i=gid+shift; i<N; i+=shift) {
     da[gid]+=da[i];
   }
+  
+  __syncthreads();
+  
+  shift = blockDim.x * blockIdx.x;
+  for(int delta=1; delta<W; delta*=2) {    
+    int i = threadIdx.x;
+    if (i + delta < W) {
+      da[i+shift] += da[i+shift+delta];
+    }
+    __syncthreads();
+  }  
 }
 
 /*
@@ -21,16 +32,6 @@ __global__ void reduce_sum(int * da, int N) {
   int gid = blockIdx.x* blockDim.x + threadIdx.x;
   
   for(int i=gid+shift; i<N; i+=shift) da[gid]+=da[i];
-  __syncthreads();
-
-
-  for(int delta=1; delta<shift; delta*=2) {
-    int i = tid*2*delta;
-    if (i + delta < N) {
-      da[i] += da[i+delta];
-    }
-    __syncthreads();
-  }
 }
 */
 
