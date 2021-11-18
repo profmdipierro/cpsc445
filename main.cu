@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-__device__ int max(int a, int b) {
+__device__ int mymax(int a, int b) {
   return (a<b)?b:a;
 }
 
@@ -17,7 +17,7 @@ __global__ void reduce_max_step1(int * da, int N) {
   tmp[tid] = da[gid];
   
   for(int i=gid+shift; i<N; i+=shift) {
-    tmp[tid]=max(tmp[tid], da[i]);
+    tmp[tid]=mymax(tmp[tid], da[i]);
   }
   
   __syncthreads();
@@ -25,7 +25,7 @@ __global__ void reduce_max_step1(int * da, int N) {
   for(int delta=1; delta<W; delta*=2) {    
     int i = threadIdx.x;
     if (i + delta < W) {
-      tmp[i] = max(tmp[i], tmp[i+delta]);
+      tmp[i] = mymax(tmp[i], tmp[i+delta]);
     }
     __syncthreads();
   }
@@ -47,7 +47,7 @@ __global__ void reduce_max_step2(int * da, int W) {
   for(int delta=1; delta<B; delta*=2) {    
     int i = tid*2*delta;
     if (i + delta < B) {
-      tmp[i] = max(tmp[i], tmp[i+delta]);
+      tmp[i] = mymax(tmp[i], tmp[i+delta]);
     }
     __syncthreads();
   }
