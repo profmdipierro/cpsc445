@@ -17,7 +17,6 @@ __global__ void sort(float * a, int N) {
   int i = threadIdx.x;
   for (int k = 2; k <= N; k *= 2) {
     for (int j = k/2; j > 0; j /= 2) {
-           
       int l = i ^ j;
       if (l > i)
 	if ((((i & k) == 0) && (a[i] > a[l])) ||
@@ -63,11 +62,11 @@ int main() {
   
   cudaMemcpy(da, ha, N*sizeof(float), cudaMemcpyHostToDevice);
 
-  sort<<<1,N>>>(ha, N);
+  sort<<<1,N>>>(da, N);
 
   cudaDeviceSynchronize();
 
-  cudaMemcpy(ha, da, N*sizeof(int), cudaMemcpyDeviceToHost);
+  cudaMemcpy(ha, da, N*sizeof(float), cudaMemcpyDeviceToHost);
 
   for (int i = 0; i<N; ++i) {
     printf("%f\n", ha[i]);
