@@ -32,13 +32,9 @@ All programs in this assignment MUST use CUDA.
     G 1
     C 1
 
-    (+2 points)
+    (+3 points)
 
-3) In a file "README.txt" derive the Speedup formula for the above code as function of tB and tL (assume the fastest network topology for each step)
-
-   (+1 points)
-
-4) Implment a dna_parse.cu that does the following:
+3) Implment a dna_parse.cu that does the following:
 
     The program should read from "dna.txt" a string containing ATGC chars.
     It should break the sequence into triplets (ATGTGATAC.. -> [ATG, TGA, TAC])
@@ -53,13 +49,9 @@ All programs in this assignment MUST use CUDA.
     TGA 1
     ATG 2
 
-   (+2 points)
+   (+3 points)
 
-5) In the file "README.txt" derive the Speedup formula for the above code as function of tB and tL (assume the fastest network topology for each step)
-
-   (+1 points)
-
-6) Extra credit. Implement a dna_genes.cu that does the following:
+4) Extra credit. Implement a dna_genes.cu that does the following:
 
     The program should read from "dna.txt" a string containing ATGC chars.
     It should break the sequence into triplets (ATGTGATAC.. -> [ATG, TGA, TAC])
@@ -72,6 +64,5 @@ All programs in this assignment MUST use CUDA.
     It should output in file "output.txt" the start and stop of each gene.
     Each line should contain the start and stop indexes of a gene,
     separated by a space.
-    Only node rank==0 should perform input output.
 
     (+2 points)
