@@ -8,7 +8,7 @@
 
 #include <stdio.h>
 
-__global__ void kMartixByMatrixElementwise(const int nThreads, const float *m1, const float *m2, float *output) {
+__device__ void kMartixByMatrixElementwise(const int nThreads, const float *m1, const float *m2, float *output) {
     /*  Computes the product of two arrays (elementwise multiplication).
      Inputs:
      m1: array
@@ -30,7 +30,7 @@ __device__ float* dMartixByMatrixElementwise(const float *m1, const float *m2, f
     return output;
 }
 
-__global__ void kMartixSubstractMatrix(const int nThreads, const float *m1, const float *m2, float *output) {
+__device__ void kMartixSubstractMatrix(const int nThreads, const float *m1, const float *m2, float *output) {
     /*  Computes the (elementwise) difference between two arrays
      Inputs:
      m1: array
@@ -53,7 +53,7 @@ __device__ float* dMartixSubstractMatrix(const float *m1, const float *m2, float
     return output;
 }
 
-__global__ void kSigmoid(const int nThreads, float const *input, float *output){
+__device__ void kSigmoid(const int nThreads, float const *input, float *output){
     /*  Computes the value of the sigmoid function f(x) = 1/(1 + e^-x).
      Inputs:
      input: array
@@ -74,7 +74,7 @@ __device__ void dSigmoid(float const *input, float *output, const int height, co
 	cudaDeviceSynchronize();
 }
 
-__global__ void kSigmoid_d(const int nThreads, float const *input, float *output) {
+__device__ void kSigmoid_d(const int nThreads, float const *input, float *output) {
 	/*  Computes the value of the sigmoid function derivative f'(x) = f(x)(1 - f(x)),
 	    where f(x) is sigmoid function.
 	    Inputs:
@@ -97,7 +97,7 @@ __device__ float* dSigmoid_d(float const *input, float *output, const int rows, 
 	return output;
 }
 
-__global__ void kDot(const int nThreads, const float *m1, const float *m2, float *output, const int m1_rows , const int m1_columns, const int m2_columns ){
+__device__ void kDot(const int nThreads, const float *m1, const float *m2, float *output, const int m1_rows , const int m1_columns, const int m2_columns ){
 	/*  Computes the product of two matrices: m1 x m2.
 	   	Inputs:
 	    m1: array, left matrix of size m1_rows x m1_columns
@@ -133,7 +133,7 @@ __device__ float* dDot(const float *m1, const float *m2, float *output, const in
 	return output;
 }
 
-__global__ void kDot_m1_m2T(const int nThreads, const float *m1, const float *m2, float *output, const int m1_columns, const int m2_rows ){
+__device__ void kDot_m1_m2T(const int nThreads, const float *m1, const float *m2, float *output, const int m1_columns, const int m2_rows ){
 	/*  Updates the output matrix with the product of two matrices: m1 and m2 transposed.
 	   	Inputs:
 	    m1: array, left matrix of size m1_rows x m1_columns
@@ -162,14 +162,14 @@ __global__ void kDot_m1_m2T(const int nThreads, const float *m1, const float *m2
 	}
 }
 
-__device__ float* dDot_m1_m2T(const float *m1, const float *m2, float *output, const int m1_rows , const int m1_columns, const int m2_rows )
+__global__ float* dDot_m1_m2T(const float *m1, const float *m2, float *output, const int m1_rows , const int m1_columns, const int m2_rows )
 {
 	kDot_m1_m2T <<< m1_rows, m2_rows >>> ( m1_rows * m2_rows, m1, m2, output, m1_columns, m2_rows );
 	cudaDeviceSynchronize();
 	return output;
 }
 
-__global__ void kDot_m1T_m2(const int nThreads, const float *m1, const float *m2, float *output, const int m1_rows,
+__device__ void kDot_m1T_m2(const int nThreads, const float *m1, const float *m2, float *output, const int m1_rows,
 							const int m1_columns, const int m2_columns ){
 	/*  Increments the output matrix with the product of two matrices: m1 transposed and m2.
 	   	Inputs:
@@ -200,13 +200,13 @@ __global__ void kDot_m1T_m2(const int nThreads, const float *m1, const float *m2
 	}
 }
 
-__device__ void dDot_m1T_m2(const float *m1, const float *m2, float *output, const int m1_height , const int m1_width, const int m2_width )
+__global__ void dDot_m1T_m2(const float *m1, const float *m2, float *output, const int m1_height , const int m1_width, const int m2_width )
 {
 	kDot_m1T_m2 <<< m1_width, m2_width >>> (m1_width * m2_width, m1, m2, output, m1_height, m1_width, m2_width );
 	cudaDeviceSynchronize();
 }
 
-__device__ void kPrintMatrix (const float* M, int h, int w) {
+void kPrintMatrix (const float* M, int h, int w) {
     /*  Prints out the input array as h x w matrix.
      Inputs:
      m: vector, matrix of size n_rows x n_columns
@@ -223,13 +223,13 @@ __device__ void kPrintMatrix (const float* M, int h, int w) {
 }
 
 __global__ void kFit(	const float* X, const int X_w, const int X_h,
-						const float* y, const int y_w,
-						float* l1, const int l1_w, float* l_1_d,
-						float* pred, float* pred_d,
-						float* W0,
-						float* W1,
-						float* buffer
-						)
+			const float* y, const int y_w,
+			float* l1, const int l1_w, float* l_1_d,
+			float* pred, float* pred_d,
+			float* W0,
+			float* W1,
+			float* buffer
+			)
 {
 	for (unsigned i = 0; i < 50; ++i) {
 
