@@ -116,8 +116,8 @@ void train(data_point *points, int np, int iterations, float N, float M,
   cudaMalloc((void**) &dwi,ni*nh*sizeof(float));
   cudaMalloc((void**) &dwo,nh*no*sizeof(float));
   
-  cudaMalloc((void**) &ci,ni*nh*sizeof(float));
-  cudaMalloc((void**) &co,nh*no*sizeof(float));
+  cudaMalloc((void**) &dci,ni*nh*sizeof(float));
+  cudaMalloc((void**) &dco,nh*no*sizeof(float));
   cudaMalloc((void**) &hidden_delta, nh*sizeof(float));
   cudaMalloc((void**) &output_delta, no*sizeof(float));
   // initiaize ci and co and copy inputs from host
@@ -140,7 +140,7 @@ void train(data_point *points, int np, int iterations, float N, float M,
       }
       ///
       update<<<1, nthreads>>>(dai, dah, dao, dwi, dwo, ni, nh, no);
-      back_propagate<<<1, nthreads>>>(dai, dah, dao, dwi, dwo, dci, dco, device_delta, hidden_delta, ni, nh, no);
+      back_propagate<<<1, nthreads>>>(N, M, dai, dah, dao, dwi, dwo, dci, dco, output_delta, hidden_delta, ni, nh, no);
 
       cudaMemcpy(ao, dao, no*sizeof(float), cudaMemcpyDeviceToHost);      
       cudaMemcpy(wi, dwi, ni*nh*sizeof(float), cudaMemcpyDeviceToHost);      
