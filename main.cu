@@ -40,7 +40,7 @@ __global__ void update(float *ai, float *ah, float * ao,
 }
 
 __global__
-void back_propagate(float N, float M,
+void back_propagate(float *targets, float N, float M,
 		    float *ai, float *ah, float * ao,
 		    float *wi, float *wo, float *ci, float *co,
 		    float *output_delta, float *hidden_delta,
@@ -109,6 +109,7 @@ void train(data_point *points, int np, int iterations, float N, float M,
   float *dco;
   float *output_delta;
   float *hidden_delta;
+  float *targets;
   
   cudaMalloc((void**) &dai,ni*sizeof(float));
   cudaMalloc((void**) &dah,nh*sizeof(float));
@@ -120,6 +121,8 @@ void train(data_point *points, int np, int iterations, float N, float M,
   cudaMalloc((void**) &dco,nh*no*sizeof(float));
   cudaMalloc((void**) &hidden_delta, nh*sizeof(float));
   cudaMalloc((void**) &output_delta, no*sizeof(float));
+  cudaMalloc((void**) &targets,no*sizeof(float));
+
   // initiaize ci and co and copy inputs from host
   for(int k=0; k<ni*nh; k++) ci[k] = 0;
   for(int k=0; k<nh*no; k++) co[k] = 0;
@@ -130,17 +133,17 @@ void train(data_point *points, int np, int iterations, float N, float M,
   cudaMemcpy(dwo, wo, nh*no*sizeof(float), cudaMemcpyHostToDevice);
   cudaMemcpy(dci, ci, ni*nh*sizeof(float), cudaMemcpyHostToDevice);
   cudaMemcpy(dco, co, nh*no*sizeof(float), cudaMemcpyHostToDevice);
+
+  float one = 1;
+  cudaMemcpy(dai+(ni-1), &one, sizeof(float), cudaMemcpyHostToDevice);
   
   for(int i=0; i<iterations; i++) {
     float error;
     for(int k=0; k<np; k++) {
-      /// copy
-      for(int i=0; i<ni-1; i++) {
-	ai[i] = points[k].inputs[i];
-      }
-      ///
+      cudaMemcpy(dai, points[k].inputs, (ni-1)*sizeof(float), cudaMemcpyHostToDevice);
+      cudaMemcpy(targets, points[k].expected, no*sizeof(float), cudaMemcpyHostToDevice);
       update<<<1, nthreads>>>(dai, dah, dao, dwi, dwo, ni, nh, no);
-      back_propagate<<<1, nthreads>>>(N, M, dai, dah, dao, dwi, dwo, dci, dco, output_delta, hidden_delta, ni, nh, no);
+      back_propagate<<<1, nthreads>>>(targets, N, M, dai, dah, dao, dwi, dwo, dci, dco, output_delta, hidden_delta, ni, nh, no);
 
       cudaMemcpy(ao, dao, no*sizeof(float), cudaMemcpyDeviceToHost);      
       cudaMemcpy(wi, dwi, ni*nh*sizeof(float), cudaMemcpyDeviceToHost);      
